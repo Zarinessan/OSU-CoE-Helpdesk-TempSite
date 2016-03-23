@@ -1,0 +1,416 @@
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <base target="_top">
+    <title>
+      Wireless Help Desk Temping System
+    </title>
+    <link rel="stylesheet" href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+    type="text/css" />
+    </head>
+    <body>
+      <!-- Reference: http://getbootstrap.com/javascript/#tabs -->
+      <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a role="tab" data-toggle="tab" aria-controls="home"
+            href="#home">View Schedule</a>
+          </li>
+          <li role="presentation">
+            <a role="tab" data-toggle="tab" aria-controls="profile"
+            href="#profile">Temp Shifts</a>
+          </li>
+          <li role="presentation">
+            <a role="tab" data-toggle="tab" aria-controls="messages"
+            href="#messages">Take Shifts</a>
+          </li>
+          </ul><!-- Tab panes -->
+          <!-- Tab panes -->
+<div class="tab-content">
+<div role="tabpanel" class="tab-pane active" id="home">
+<center>
+            <br />
+
+          <iframe src="https://www.google.com/calendar/embed?title=Engineering%20HelpDesk%20Schedule&amp;mode=WEEK&amp;height=700&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=6fo2ve9scu3k3960ekbe7hqk7c%40group.calendar.google.com&amp;color=%2329527A&amp;src=ctic1t9plq3srl03eq8pc46t94%40group.calendar.google.com&amp;color=%23A32929&amp;ctz=America%2FLos_Angeles" 
+          style=" border-width:0 " width="900" height="700" frameborder="0" scrolling="no"></iframe><br>
+            Included is the <font color="blue">Help Desk</font> and
+            <font color="red">Lab</font> schedulue.
+          </center>
+        
+          <div class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container">
+              <span class="navbar-text">
+              <button type="button" onclick="syncMyCalendar(); alert('The calendar will take some time to sync'">Sync Calendar</button>
+               <p id="userEmail">User's Email</p>
+                <script type="text/javascript">
+                  google.script.run.withSuccessHandler(updateText).withUserObject(this).getEmail();
+
+                  function updateText(email) {
+                    document.getElementById("userEmail").innerHTML = 'Logged in as ' + email;
+                  }
+                  
+                  function syncMyCalendar(){
+                    google.script.run.withSuccessHandler().withUserObject(this).syncCalendar();
+                  }
+                </script>
+              </span></div></div>
+
+
+</div>
+<div role="tabpanel" class="tab-pane" id="profile">
+               
+            <div class="container">
+            <div class="table-responsive">
+
+            
+            <?var shiftArrayInfo = getBothStrings()?>
+            <?var tempShiftArrayLength = shiftArrayInfo.length?>
+            <?var tempShiftArrayInfo = shiftArrayInfo?>
+            <?var x = true?>
+            <?var count = 0?> 
+            
+            <? while(x == true) { ?>
+               <?counter = 1?> 
+               <?var str = shiftArrayInfo[count]?>
+               <?var res = str.split(",");?>
+              <?var dateSplit = res[0].split(" ")?>
+              <h3>
+              <?=dateSplit[0]?>
+              <small>&nbsp;&nbsp;&nbsp;<?=dateSplit[1]?> <?=dateSplit[2]?> <?=dateSplit[3]?></small>
+              </h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>
+                      
+                   <center> <?//<button onclick="">Select All </button>?>
+                   </center>
+    
+
+                    </th>
+                    <th>
+                     Time 
+                    </th>
+                    <th>
+                     Type
+                    </th>
+                    <th>
+                     Original Owner
+                    </th>
+                  </tr>
+                </thead>
+                <? for (var i= 0; i < counter; i++) { ?>
+                   <?var str = shiftArrayInfo[count]?>
+                   <?var res = str.split(",");?>
+                   <?var dateSplit = res[0].split(" ")?>
+
+                    <?if((count + 1) != shiftArrayInfo.length){
+                      var nextString = shiftArrayInfo[count + 1]
+                      var nextDate = nextString.split(",")
+                      var nextDayDateSplit = nextDate[0].split(" ")
+                      var currentDate = new Date(res[0])
+                      var nextDate = new Date(nextDate[0])
+                      var currentDateString = nextDayDateSplit[1] + nextDayDateSplit[2] + nextDayDateSplit[3]
+                      var nextDateString = dateSplit[1] + dateSplit[2] + dateSplit[3]?>
+                      
+           
+                      
+                      
+                      
+                      
+                      
+                      <?if(currentDateString == nextDateString){?>
+                              <?counter = counter + 1?> 
+                               
+                      
+                      
+                      
+                      
+                      <?}?>
+                      
+                    <?}?>
+                  <?count = count + 1?> 
+                   
+                                
+     
+                <tbody>
+                  <tr>
+                    <td><center>
+                      
+                      <form action="">
+                        
+                        
+                        <input type="checkbox" id="checkboxTempShift<?=[count-1]?>">
+                      </form></center>
+                    </td>
+                 
+                    <td><?=res[1]?>00-<?=res[2]?>00</td>
+                    
+                    <td>
+                      <?=res[4]?>
+                    </td>
+                    <td>
+                      <?=res[3]?>
+                    </td>
+                  </tr>
+                </tbody>
+                <?if((count + 1) == shiftArrayInfo.length){
+                   x = false 
+                }
+                ?>
+                
+                <?} ?>
+              </table>
+              <? } ?>
+            </div>
+          </div><br />
+          <br />
+          <br />
+
+                 <div class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <span class="navbar-text">
+     <button onclick="tempShiftsFunction()"><strong><center>Temp Shifts</center></strong></button>
+    </span>
+  </div>
+</div>
+
+
+
+
+
+
+</div>
+<div role="tabpanel" class="tab-pane" id="messages">
+<div class="container">
+
+            <div class="table-responsive">
+            
+            <?var shiftArrayInfo = getTempStrings()?>
+            <?var takeShiftArrayInfo = shiftArrayInfo?> 
+            <?var takeShiftArrayLength = shiftArrayInfo.length?>
+            <?if(shiftArrayInfo.length != 0){?>
+            <?var x = true?>
+            <?var count = 0?> 
+            
+            <? while(x == true) { ?>
+               <?counter = 1?> 
+               <?var str = shiftArrayInfo[count]?>
+               <?var res = str.split(",");?>
+               <?var dateSplit = res[0].split(" ")?>
+              <h3>
+              <?=dateSplit[0]?>
+              <small>&nbsp;&nbsp;&nbsp;<?=dateSplit[1]?> <?=dateSplit[2]?> <?=dateSplit[3]?></small>
+              </h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>
+                      
+                   <center> <?//<button onclick="">Select All </button>?>
+                   </center>
+    
+
+                    </th>
+                    <th>
+                     Time 
+                    </th>
+                    <th>
+                     Type
+                    </th>
+                    <th>
+                     Original Owner
+                    </th>
+                  </tr>
+                </thead>
+                <? for (var i= 0; i < counter; i++) { ?>
+                   <?var str = shiftArrayInfo[count]?>
+                   <?var res = str.split(",");?>
+                   <?var dateSplit = res[0].split(" ")?>
+
+                    <?if((count + 1) != shiftArrayInfo.length && shiftArrayInfo.length != 1){
+                      var nextString = shiftArrayInfo[count + 1]
+                      var nextDate = nextString.split(",")
+                      var nextDayDateSplit = nextDate[0].split(" ")
+                      var currentDate = new Date(res[0])
+                      var nextDate = new Date(nextDate[0])
+                      var currentDateString = nextDayDateSplit[1] + nextDayDateSplit[2] + nextDayDateSplit[3]
+                      var nextDateString = dateSplit[1] + dateSplit[2] + dateSplit[3]?>
+                      <?if(currentDateString == nextDateString){?>
+                              <?counter = counter + 1?> 
+                               
+                      
+                      
+                      
+                      
+                      <?}?>
+                      
+                    <?}?>
+                  <?count = count + 1?> 
+                   
+                                
+     
+                <tbody>
+                  <tr>
+                    <td><center>
+                      
+                      <form action="">
+                        
+                        
+                        <input type="checkbox" id="checkboxTakeShift<?=[count-1]?>">
+                      </form></center>
+                    </td>
+                 
+                    <td><?=res[1]?>00-<?=res[2]?>00</td>
+                    
+                    <td>
+                      <?=res[4]?>
+                    </td>
+                    <td>
+                      <?=res[3]?>
+                    </td>
+                  </tr>
+                </tbody>
+                <?if((count + 1) == shiftArrayInfo.length){
+                   x = false 
+                }
+                ?>
+                
+                <?} ?>
+              </table>
+              <? } ?>
+              
+             <?}?>
+             
+            </div>
+            
+          <br />
+          <br />
+          <br />
+
+
+
+
+
+
+
+
+
+   
+
+
+
+
+ <div class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <span class="navbar-text">
+     <button onclick="takeShiftsFunction()"><strong><center>Take Shifts</center></strong></button>
+    </span>
+  </div>
+</div>
+</div> 
+</div>
+</div>
+</body>
+
+
+</html>
+
+        
+    
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"
+    type="text/javascript">
+    
+    
+    
+
+
+
+    </script><script src=
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"
+    type="text/javascript">
+</script>
+
+ <script type="text/javascript">
+                
+        
+        
+        function tempShiftsFunction(){
+        
+          var shiftsToTempArray = new Array() 
+          var arrayCopy = new Array()
+          var counter = 0          
+          <?var count = 0?> 
+          <?for(var j = 0; j < tempShiftArrayLength; j++){?>
+            arrayCopy[<?=count?>] = "<?=tempShiftArrayInfo[j]?>"
+            <?count = count + 1?>
+          <?}?>
+          
+          for(var i = 0; i < arrayCopy.length; i++){
+
+                 var temp = 'checkboxTempShift' + i;
+                 temp.toString();
+                 var x = document.getElementById(temp).checked;
+           
+                 
+                 if(x == true) {
+                    var temp = arrayCopy[i];
+                    //shiftsToTempArray[counter] = arrayCopy[i];
+                    //counter = counter + 1;
+                    /*var div = document.getElementById('newString');
+                    div.innerHTML = x;*/
+                   google.script.run.withSuccessHandler(runTempShiftFromArray).withUserObject(this).tempShiftFromArray(temp);
+                     function runTempShiftFromArray(returnValue){      
+                   }
+                 }
+               } 
+
+         }
+         
+              
+        
+     
+        function takeShiftsFunction(){
+         
+         
+          var shiftsToTempArray = new Array() 
+          var arrayCopy = new Array()
+          var counter = 0          
+          <?var count = 0?> 
+          <?for(var j = 0; j < takeShiftArrayLength; j++){?>
+            arrayCopy[<?=count?>] = "<?=takeShiftArrayInfo[j]?>"
+            <?count = count + 1?>
+          <?} ?>
+          
+          for(var i = 0; i < arrayCopy.length; i++){
+
+                 var temp = 'checkboxTakeShift' + i;
+                 temp.toString();
+                 var x = document.getElementById(temp).checked;
+           
+                 
+                 if(x == true) {
+                    var take = arrayCopy[i];
+                    //shiftsToTempArray[counter] = arrayCopy[i];
+                    //counter = counter + 1;
+                    /*var div = document.getElementById('newString');
+                    div.innerHTML = x;*/
+                   google.script.run.withSuccessHandler(runTakeShiftFromArray).withUserObject(this).takeShiftFromArray(take);
+                     function runTakeShiftFromArray(returnValue){      
+                   }
+                 }
+               } 
+
+         }
+        
+      
+        
+        
+    </script>
+    
+    

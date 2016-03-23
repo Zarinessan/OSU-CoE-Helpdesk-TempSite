@@ -1,0 +1,479 @@
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <base target="_top">
+    <title>
+      Wireless Help Desk Temping System
+    </title>
+    <link rel="stylesheet" href=
+    "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+    type="text/css" />
+    </head>
+    <body>
+      <!-- Reference: http://getbootstrap.com/javascript/#tabs -->
+      <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a role="tab" data-toggle="tab" aria-controls="home"
+            href="#home">View Schedule</a>
+          </li>
+          <li role="presentation">
+            <a role="tab" data-toggle="tab" aria-controls="profile"
+            href="#profile">Temp Shifts</a>
+          </li>
+          <li role="presentation">
+            <a role="tab" data-toggle="tab" aria-controls="messages"
+            href="#messages">Take Shifts</a>
+          </li>
+          <li role="presentation">
+            <a role="tab" data-toggle="tab" aria-controls="tempSched"
+            href="#tempSched">Temp Schedule</a>
+          </li>
+          </ul><!-- Tab panes -->
+          <!-- Tab panes -->
+<div class="tab-content">
+<div role="tabpanel" class="tab-pane active" id="home">
+<center>
+            <br />
+            <?if(checkActiveUserWithContactSpreadsheet() == 0){?> 
+                <b>Not an authorized user.  Please verify that your e-mail address is on the contacts list.</b>
+                <br> 
+            <?}?>
+            <iframe src="https://www.google.com/calendar/embed?title=Engineering%20Helpdesk&amp;mode=WEEK&amp;height=800&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=his1c25cb50u81msu2rvglek6s%40group.calendar.google.com&amp;color=%232952A3&amp;src=dmuetm0i0sei0ulpju5cc2a2i8%40group.calendar.google.com&amp;color=%23A32929&amp;ctz=America%2FLos_Angeles" 
+            style=" border-width:0 " width="1100" height="800" frameborder="0" scrolling="no"></iframe>
+            <br>Included is the <font color="blue">Help Desk</font> and
+            <font color="red">Lab</font> schedulue.
+          </center>
+        
+          <div class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container">
+              <span class="navbar-text">
+              <button type="button" onclick="syncMyCalendar(); alert('The calendar will take some time to sync')">Sync Calendar</button>
+               <p id="userEmail">User's Email</p>
+                <script type="text/javascript">
+                  google.script.run.withSuccessHandler(updateText).withUserObject(this).getEmail();
+
+                  function updateText(email) {
+                    document.getElementById("userEmail").innerHTML = 'Logged in as ' + email;
+                  }
+                  
+                  function syncMyCalendar(){
+                    google.script.run.withSuccessHandler().withUserObject(this).syncCalendar();
+                  }
+                </script>
+              </span></div></div>
+
+
+</div>
+<div role="tabpanel" class="tab-pane" id="profile">  
+<div class="container">
+<div class="table-responsive">
+   <?if(checkActiveUserWithContactSpreadsheet() == 0){?> 
+                <b>Not an authorized user.  Please verify that your e-mail address is on the contacts list.</b>
+  <?}?>
+  <?if(checkActiveUserWithContactSpreadsheet() != 0) {?>
+    <?var shiftArrayInfo = getBothStrings()?>
+    <?var tempShiftArrayLength = shiftArrayInfo.length?>
+    <?var tempShiftArrayInfo = shiftArrayInfo?>
+    <?var x = true?>
+    <?var count = 0?> 
+    <?if(shiftArrayInfo.length == 0){?>
+      <center><h3>No Upcoming Shifts on Calendar</h3></center> 
+    <?} ?>
+    <?if(tempShiftArrayLength != 0){?>
+      <? while(x == true) { ?>
+        <?counter = 1?> 
+        <?var str = shiftArrayInfo[count]?>
+        <?var res = str.split(",");?>
+        <?var dateSplit = res[0].split(" ")?>
+        <h3><?=formatDayString(dateSplit[0])?><small>&nbsp;&nbsp;&nbsp;<?=dateSplit[1]?> <?=dateSplit[2]?> <?=dateSplit[3]?></small></h3>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>
+                      
+                   <center> <?//<button onclick="">Select All </button>?>
+                   </center>
+    
+
+                    </th>
+                    <th>
+                     Time 
+                    </th>
+                    <th>
+                     Type
+                    </th>
+                    <th>
+                     Original Owner
+                    </th>
+                  </tr>
+                </thead>
+                <? for (var i= 0; i < counter; i++) { ?>
+                   <?var str = shiftArrayInfo[count]?>
+                   <?var res = str.split(",");?>
+                   <?var dateSplit = res[0].split(" ")?>
+
+                    <?if((count + 1) != shiftArrayInfo.length){
+                      var nextString = shiftArrayInfo[count + 1]
+                      var nextDate = nextString.split(",")
+                      var nextDayDateSplit = nextDate[0].split(" ")
+                      var currentDate = new Date(res[0])
+                      var nextDate = new Date(nextDate[0])
+                      var currentDateString = nextDayDateSplit[1] + nextDayDateSplit[2] + nextDayDateSplit[3]
+                      var nextDateString = dateSplit[1] + dateSplit[2] + dateSplit[3]?>
+                      <?if(currentDateString == nextDateString){?>
+                              <?counter = counter + 1?>                   
+                      <?}?>
+                      
+                    <?}?>
+                 
+                   
+                                
+     
+                <tbody>
+                  <tr>
+                    <td><center>
+                      
+                      <form action="">
+                        
+                        
+                        <input type="checkbox" id="checkboxTempShift<?=[count]?>">
+                      </form></center>
+                    </td>
+                 
+                    <td><?=res[1]?>00-<?=res[2]?>00</td>
+                    
+                    <td>
+
+                    <?if(formatTypeString(res[4]) == 'Lab'){?>
+                      <?=formatTypeString(res[4])?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <?}?>
+                    <?if(formatTypeString(res[4]) == 'Helpdesk'){?>
+                      <?=formatTypeString(res[4])?>
+                    <?}?>
+                    </td>
+                    <td>
+                      <?=res[3]?>
+                    </td>
+                  </tr>
+                </tbody>
+                <?if((count + 1) == shiftArrayInfo.length){
+                   x = false 
+                   
+                }
+                ?>
+                <?count = count + 1?> 
+                <?} ?>
+              </table>
+              <? } ?>
+              <? } ?>
+              <? } ?>
+             
+              
+            </div>
+          </div><br />
+          <br />
+          <br />
+
+                 <div class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <span class="navbar-text">
+     <button onclick ="this.disabled=true;tempShiftsFunction()"><strong><center>Temp Shifts</center></strong></button>
+    </span>
+  </div>
+</div>
+
+
+
+
+
+
+</div>
+
+<div role="tabpanel" class="tab-pane" id="messages">
+<div class="container">
+<div class="table-responsive">
+<?if(checkActiveUserWithContactSpreadsheet() == 0){?> 
+     <b>Not an authorized user.  Please verify that your e-mail address is on the contacts list.</b>
+<?}?>
+<?if(checkActiveUserWithContactSpreadsheet() != 0) {?>
+  <?sortTemps()?> 
+  <?var shiftArrayInfo = getTempStrings()?>
+  <?var takeShiftArrayInfo = shiftArrayInfo?> 
+  <?var takeShiftArrayLength = shiftArrayInfo.length?>
+  <?if(shiftArrayInfo.length == 0){?>
+    <center><h3>No Avaliable Shifts to Temp</h3></center> 
+  <?} ?>
+  <?if(shiftArrayInfo.length != 0){?>
+    <?var x = true?>
+    <?var count = 0?>       
+    <? while(x == true) { ?>
+      <?counter = 1?> 
+      <?var str = shiftArrayInfo[count]?>
+      <?var res = str.split(",");?>
+      <?var dateSplit = res[0].split(" ")?>
+      <h3><?=formatDayString(dateSplit[0])?><small>&nbsp;&nbsp;&nbsp;<?=dateSplit[1]?> <?=dateSplit[2]?> <?=dateSplit[3]?></small></h3>
+      <table class="table">
+      <thead>
+      <tr>
+        <th><center> <?/*<button onclick="">Select All </button>*/?></center></th>
+        <th>Time</th>
+        <th>Type</th>
+        <th>Original Owner</th>
+      </tr>
+      </thead>
+      <? for (var i= 0; i < counter; i++) { ?>
+        <?var str = shiftArrayInfo[count]?>
+        <?var res = str.split(",");?>
+        <?var dateSplit = res[0].split(" ")?>
+        <?if((count + 1) != shiftArrayInfo.length && shiftArrayInfo.length != 1){
+          var nextString = shiftArrayInfo[count + 1]
+          var nextDate = nextString.split(",")
+          var nextDayDateSplit = nextDate[0].split(" ")
+          var currentDate = new Date(res[0])
+          var nextDate = new Date(nextDate[0])
+          var currentDateString = nextDayDateSplit[1] + nextDayDateSplit[2] + nextDayDateSplit[3]
+          var nextDateString = dateSplit[1] + dateSplit[2] + dateSplit[3]?>
+          <?if(currentDateString == nextDateString){?>
+            <?counter = counter + 1?> 
+          <?}?>
+        <?}?>
+        <tbody>
+          <tr>
+            <td><center><form action=""><input type="checkbox" id="checkboxTakeShift<?=[count]?>"></form></center></td>      
+            <td><?=res[1]?>00-<?=res[2]?>00</td>
+            <td>
+            <?if(formatTypeString(res[4]) == 'Lab'){?>
+              <?=formatTypeString(res[4])?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <?}?>
+            <?if(formatTypeString(res[4]) == 'Helpdesk'){?>
+              <?=formatTypeString(res[4])?>
+            <?}?>
+            </td>
+            <td><?=res[3]?></td>
+          </tr>
+            </tbody>
+              <?if((count + 1) == shiftArrayInfo.length){
+                x = false 
+              }
+                ?>
+                 <?count = count + 1?> 
+                
+                <?} ?>
+              </table>
+              <? } ?>
+              
+             <?}?>
+           <?}?>
+             
+            </div>
+          <br />
+          <br />
+          <br />
+ <div class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <span class="navbar-text">
+     <button onclick="this.disabled=true;takeShiftsFunction()"><strong><center>Take Shifts</center></strong></button>
+    </span>
+  </div>
+</div>
+</div> 
+</div>
+
+
+<div role="tabpanel" class="tab-pane" id="tempSched">
+<div class="container">
+<div class="table-responsive">
+ <?if(checkActiveUserWithContactSpreadsheet() == 0){?> 
+                <b>Not an authorized user.  Please verify that your e-mail address is on the contacts list.</b>
+  <?}?>
+<?if(checkActiveUserWithContactSpreadsheet() != 0) {?>
+   <?var shiftArrayInfo = getTakenTempStrings()?>
+   <?var takenShiftArrayInfo = shiftArrayInfo?> 
+   <?var takenShiftArrayLength = shiftArrayInfo.length?>
+   <?if(shiftArrayInfo.length == 0){?>
+     <center><h3>No Upcoming Taken Shifts</h3></center> 
+   <?} ?>
+   <?if(shiftArrayInfo.length != 0){?>
+     <?var x = true?>
+     <?var count = 0?>     
+       <? while(x == true) { ?>
+         <?counter = 1?> 
+         <?var str = shiftArrayInfo[count]?>
+         <?var res = str.split(",");?>
+         <?var dateSplit = res[0].split(" ")?>
+         <h3><?=formatDayString(dateSplit[0])?><small>&nbsp;&nbsp;&nbsp;<?=dateSplit[1]?> <?=dateSplit[2]?> <?=dateSplit[3]?></small></h3>
+         <table class="table">
+           <thead>
+             <tr>
+               <th>Taken By</th>
+               <th>Time</th>
+               <th>Type</th>
+               <th>Original Owner</th>
+             </tr>
+               </thead>
+                 <? for (var i= 0; i < counter; i++) { ?>
+                   <?var str = shiftArrayInfo[count]?>
+                   <?var res = str.split(",");?>
+                   <?var dateSplit = res[0].split(" ")?>
+                     <?if((count + 1) != shiftArrayInfo.length && shiftArrayInfo.length != 1){
+                       var nextString = shiftArrayInfo[count + 1]
+                       var nextDate = nextString.split(",")
+                       var nextDayDateSplit = nextDate[0].split(" ")
+                       var currentDate = new Date(res[0])
+                       var nextDate = new Date(nextDate[0])
+                       var currentDateString = nextDayDateSplit[1] + nextDayDateSplit[2] + nextDayDateSplit[3]
+                       var nextDateString = dateSplit[1] + dateSplit[2] + dateSplit[3]?>
+                       <?if(currentDateString == nextDateString){?>
+                         <?counter = counter + 1?> 
+                       <?}?>
+                     <?}?>   
+                     <tbody>
+                       <tr>
+                        <td><?=res[5]?></td>  
+                        <td><?=res[1]?>00-<?=res[2]?>00</td>
+                        <td>
+                        <?if(formatTypeString(res[4]) == 'Lab'){?>
+                          <?=formatTypeString(res[4])?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <?}?>
+                        <?if(formatTypeString(res[4]) == 'Helpdesk'){?>
+                          <?=formatTypeString(res[4])?>
+                        <?}?>
+                        </td>
+                        <td><?=res[3]?></td>
+                       </tr>
+                     </tbody>
+                     <?if((count + 1) == shiftArrayInfo.length){
+                       x = false 
+                     }?>
+                     <?count = count + 1?> 
+                 <?} ?>
+                 </table>
+       <? } ?>
+   <? } ?>
+ <? } ?>
+</div>
+</div> 
+
+<div class="navbar navbar-default navbar-fixed-bottom">
+<div class="container">
+  <span class="navbar-text"></span>
+</div>
+</div>
+
+
+</div>
+
+
+
+
+
+</div>
+</body>
+
+
+</html>
+
+        
+    
+    <script src=
+    "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"
+    type="text/javascript">
+    
+    
+    
+
+
+
+    </script><script src=
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"
+    type="text/javascript">
+</script>
+<?if(checkActiveUserWithContactSpreadsheet() != 0) {?>
+  <?var buttonClickFlag = true?> 
+ <script type="text/javascript">
+                
+        
+        function tempShiftsFunction(){
+          
+          var shiftsToTempArray = new Array() 
+          var arrayCopy = new Array()
+          var counter = 0 
+        
+          <?if(buttonClickFlag == true){?> 
+              console.log(<?=buttonClickFlag?>);
+          <?var count = 0?> 
+          <?for(var j = 0; j < tempShiftArrayLength; j++){?>
+            arrayCopy[<?=count?>] = "<?=tempShiftArrayInfo[j]?>"
+            <?count = count + 1?>
+          <?}?>
+          
+          for(var i = 0; i < arrayCopy.length; i++){
+
+                 var temp = 'checkboxTempShift' + i;
+                 temp.toString();
+                 console.log(temp);
+                 try {
+                      var x = document.getElementById(temp).checked;
+                      if(x == true){
+                      var temp = arrayCopy[i];
+                        //shiftsToTempArray[counter] = arrayCopy[i];
+                       //counter = counter + 1;
+                       /*var div = document.getElementById('newString');
+                        div.innerHTML = x;*/
+                        google.script.run.withSuccessHandler(runTempShiftFromArray).withUserObject(this).tempShiftFromArray(temp);
+                        function runTempShiftFromArray(returnValue){      
+                           }
+                   }
+                 }
+                 catch(err) {
+                     //window.top.location.reload();
+                     //window.location.reload("https://script.google.com/macros/s/AKfycbzmS4xGhw1WMkAdGtVAw6yrXORk80u-pm9Bx4V5kj5YdWAooz0/exec")
+                 }
+           }
+           window.top.location = "https://script.google.com/macros/s/AKfycbzmS4xGhw1WMkAdGtVAw6yrXORk80u-pm9Bx4V5kj5YdWAooz0/exec";
+           //window.location.reload("https://script.google.com/macros/s/AKfycbzmS4xGhw1WMkAdGtVAw6yrXORk80u-pm9Bx4V5kj5YdWAooz0/exec")
+           
+           <?}?> 
+           <?buttonClickFlag = false?> 
+           console.log(<?=buttonClickFlag?>);
+         }
+
+        function takeShiftsFunction(){
+
+          var shiftsToTempArray = new Array() 
+          var arrayCopy = new Array()
+          var counter = 0          
+          <?var count = 0?> 
+          <?for(var j = 0; j < takeShiftArrayLength; j++){?>
+            arrayCopy[<?=count?>] = "<?=takeShiftArrayInfo[j]?>"
+            <?count = count + 1?>
+          <?} ?>
+          
+          for(var i = 0; i < arrayCopy.length; i++){
+
+                 var temp = 'checkboxTakeShift' + i;
+                 temp.toString();
+                 var x = document.getElementById(temp).checked;
+           
+                 
+                 if(x == true) {
+                    var take = arrayCopy[i];
+                    //shiftsToTempArray[counter] = arrayCopy[i];
+                    //counter = counter + 1;
+                    /*var div = document.getElementById('newString');
+                    div.innerHTML = x;*/
+                   google.script.run.withSuccessHandler(runTakeShiftFromArray).withUserObject(this).takeShiftFromArray(take);
+                     function runTakeShiftFromArray(returnValue){      
+                   }
+                 }
+               }
+               window.top.location = "https://script.google.com/macros/s/AKfycbzmS4xGhw1WMkAdGtVAw6yrXORk80u-pm9Bx4V5kj5YdWAooz0/exec";
+         }
+<?} ?>
+    </script>
+    
+    
